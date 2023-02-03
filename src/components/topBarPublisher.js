@@ -1,85 +1,80 @@
-import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+import React, { useState } from 'react';
+
 import { Link } from 'gatsby';
-import { AnchorLink } from 'gatsby-plugin-anchor-links';
 import { StaticImage } from 'gatsby-plugin-image';
+
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import MenuIcon from '@mui/icons-material/Menu';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import Swal from 'sweetalert2';
-import { AppBar, Box, Button, Container, IconButton, MenuItem, Toolbar, Typography } from '@mui/material';
-import ServiceClient from '../services/serviceClient';
-//import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+
 // import LinkedInIcon from '@mui/icons-material/LinkedIn';
 // import FacebookIcon from '@mui/icons-material/Facebook';
 // import { width } from '@mui/system';
 
-function TopBar({ siteTitle }) {
-  const [configParam, setConfigParam] = useState([]);
-
-  const handlePopup = () => {
-    Swal.fire({
-      icon: 'question',
-      title: 'Mobile Device Detected!',
-      text: `In order to use the functionality fully please visit us from metamask application's browser.`,
-      footer: '<a href="https://metamask.app.link/dapp/www.dvlpnft.io/">Open in Metamask</a>',
-    });
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await ServiceClient.get(`/config-params?filters[param_name]=navigation`).catch(err =>
-        console.log(err)
-      );
-      if (response && response.data && response.status === 200) {
-        setConfigParam(response.data.data);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const configParamValue = configParam.map(config => {
-    return config.attributes.param_value;
-  });
+function TopBarPublisher({ siteTitle }) {
+  //const pages = ['Vine Verified', 'Marketplace', 'About', 'My NFTs'];
 
   const pages = [
     {
-      title: 'Roadmap',
-      slug: '/#timeline',
+      title: 'Vine verified',
+      slug: '/vine-verified',
     },
     {
       title: 'Marketplace',
       slug: '/marketplace',
     },
     {
-      title: 'Passport',
+      title: "My NFT's",
       slug: '/myNfts',
     },
     {
-      title: 'Profile',
-      slug: '/profile',
+      title: 'About',
+      slug: '/about',
     },
-    // {
-    //   title: 'About',
-    //   slug: '/#about',
-    // },
-    // {
-    //   title: 'FAQ',
-    //   slug: '/#faq',
-    // },
 
-    // {
-    //   title: 'Contact',
-    //   slug: '/contact',
-    // },
+    {
+      title: 'Timeline',
+      slug: '/timeline',
+    },
+    {
+      title: 'FAQ',
+      slug: '/FAQ',
+    } /* ,
+        {
+            "title": "Contact",
+            "slug": "/contact"
+        } */,
   ];
 
+  const settings = ['Create account', 'Login'];
+
   const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenNavMenu = event => {
     setAnchorElNav(event.currentTarget);
   };
+  const handleOpenUserMenu = event => {
+    setAnchorElUser(event.currentTarget);
+  };
+
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
   };
 
   return (
@@ -94,25 +89,24 @@ function TopBar({ siteTitle }) {
         style={{
           display: 'flex',
           flexGrow: 1,
-          backgroundColor: 'rgb(0, 24, 48)',
+          backgroundColor: 'rgb(0, 8, 45)',
           color: 'rgb(9,74,155)',
           alignItems: 'center',
           justifyContent: 'flex-end',
           paddingRight: 3,
-          fontFamily: 'Montserrat',
         }}
       >
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography variant="h6" noWrap component="div" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
-              <Link to="/about">
+              <Link to="/">
                 <StaticImage
                   src="../images/DVLPLogo.png"
                   quality={95}
                   formats={['auto', 'webp', 'avif']}
-                  alt="DVLPNFT Powered by Vine Digital"
+                  alt="Vine Investment"
                   style={{ marginBottom: 1, marginTop: 1 }}
-                  height={45}
+                  height={55}
                 />
               </Link>
             </Typography>
@@ -120,7 +114,7 @@ function TopBar({ siteTitle }) {
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
                 size="large"
-                aria-label="menu burger"
+                aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleOpenNavMenu}
@@ -147,13 +141,7 @@ function TopBar({ siteTitle }) {
                 }}
               >
                 {pages.map(page => (
-                  <MenuItem
-                    key={page.slug}
-                    onClick={handleCloseNavMenu}
-                    component={AnchorLink}
-                    onAnchorLinkClick={handleCloseNavMenu}
-                    to={page.slug}
-                  >
+                  <MenuItem key={page.slug} onClick={handleCloseNavMenu} component={Link} to={page.slug}>
                     <Typography
                       textAlign="center"
                       style={{
@@ -162,39 +150,23 @@ function TopBar({ siteTitle }) {
                         flexGrow: 1,
                         alignItems: 'center',
                         justifyContent: 'flex-end',
-                        fontFamily: 'Montserrat',
                       }}
                     >
                       {page.title}
                     </Typography>
                   </MenuItem>
                 ))}
-                <MenuItem onClick={handlePopup}>
-                  <Typography
-                    textAlign="center"
-                    style={{
-                      color: 'rgb(9,74,120)',
-                      display: 'flex',
-                      flexGrow: 1,
-                      alignItems: 'center',
-                      justifyContent: 'flex-end',
-                      fontFamily: 'Montserrat',
-                    }}
-                  >
-                    Mobile
-                  </Typography>
-                </MenuItem>
               </Menu>
             </Box>
             <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <Link to="/about">
+              <Link to="/">
                 <StaticImage
                   src="../images/DVLPLogo.png"
-                  quality={90}
+                  quality={95}
                   formats={['auto', 'webp', 'avif']}
-                  alt="DVLPNFT Powered by Vine Digital"
-                  style={{ marginBottom: 1, marginTop: 3 }}
-                  height={35}
+                  alt="Vine Investment"
+                  style={{ marginBottom: 1, marginTop: 1 }}
+                  height={45}
                 />
               </Link>
             </Typography>
@@ -207,22 +179,14 @@ function TopBar({ siteTitle }) {
                 paddingRight: 10,
               }}
             >
-              {configParamValue == '1' &&
-                pages.map(page => (
-                  <Button
-                    key={page.slug}
-                    onClick={handleCloseNavMenu}
-                    component={AnchorLink}
-                    onAnchorLinkClick={handleCloseNavMenu}
-                    to={page.slug}
-                    sx={styles.button}
-                  >
-                    {page.title}
-                  </Button>
-                ))}
+              {pages.map(page => (
+                <Button key={page.slug} onClick={handleCloseNavMenu} component={Link} to={page.slug} sx={styles.button}>
+                  {page.title}
+                </Button>
+              ))}
             </Box>
 
-            {/*             <Box sx={{ flexGrow: 0 }}>
+            <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <ManageAccountsIcon sx={{ color: 'rgb(9,74,120)' }} />
@@ -250,7 +214,7 @@ function TopBar({ siteTitle }) {
                   </MenuItem>
                 ))}
               </Menu>
-            </Box> */}
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
@@ -258,11 +222,11 @@ function TopBar({ siteTitle }) {
   );
 }
 
-TopBar.propTypes = {
+TopBarPublisher.propTypes = {
   siteTitle: PropTypes.string,
 };
 
-TopBar.defaultProps = {
+TopBarPublisher.defaultProps = {
   siteTitle: ``,
 };
 
@@ -286,11 +250,7 @@ const styles = {
       color: '#00F5FF',
     },
     borderRadius: 20,
-    // backgroundColor: 'rgb(7, 40, 77)',
-    // '&:hover': {
-    //   backgroundColor: 'rgb(0, 246, 254)',
-    //   color: 'rgb(0, 24, 48)',
-    // },
+    // backgroundColor: 'rgb(9,74,120)',
     // display: 'block',
     height: '10%',
     paddingLeft: 2,
@@ -304,4 +264,4 @@ const styles = {
   },
 };
 
-export default TopBar;
+export default TopBarPublisher;

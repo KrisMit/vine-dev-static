@@ -1,29 +1,19 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 
 const Input = styled('input')({
   display: 'none',
 });
 
-export default function UploadButtons() {
+export default function UploadButtons({ children, onClick }) {
   return (
-    <Stack direction="row" alignItems="center" spacing={2}  sx={{ display: 'flex', marginLeft:'40%', marginRight:'40%', flexGrow: 1,  alignItems: "center", justifyContent: "center",}} >
-      <label htmlFor="contained-button-file">
-        <Input accept="image/*" id="contained-button-file" multiple type="file" />
-        <Button variant="contained" component="span" sx={{ backgroundColor: "rgb(9,74,120)"   }}>
-          Upload
-        </Button>
-      </label>
-      {/* <label htmlFor="icon-button-file">
-        <Input accept="image/*" id="icon-button-file" type="file" />
-        <IconButton color="primary" aria-label="upload picture" component="span"  >
-          <PhotoCamera  />
-        </IconButton>
-      </label> */}
-    </Stack>
+    <label htmlFor="contained-button-file">
+      <Input accept="image/*" id="contained-button-file" multiple type="file" />
+      <Button variant="contained" onClick={onClick} component="span" sx={{ backgroundColor: 'rgb(9,74,120)' }}>
+        {children}
+      </Button>
+    </label>
   );
 }

@@ -1,23 +1,24 @@
-import * as React from 'react';
+import React, { Fragment, useRef, useState } from 'react';
+
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
 
-const options = [ 'Collectible', 'Clip Rights', 'Movie', 'TV Show'];
+//const options = [ 'Collectible', 'Clip Rights', 'Movie', 'TV Show'];
 
-export default function DropDown() {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+export default function DropDown({ dropOptions }) {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
+    console.info(`You clicked ${dropOptions[selectedIndex]}`);
   };
 
   const handleMenuItemClick = (event, index) => {
@@ -26,10 +27,10 @@ export default function DropDown() {
   };
 
   const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setOpen(prevOpen => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = event => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -38,15 +39,39 @@ export default function DropDown() {
   };
 
   return (
-    <React.Fragment >
-      <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button" sx={{ marginLeft: '46%', marginRight: '43%', position: 'relative', alignItems: 'center', justifyContent: 'center', backgroundColor: "rgb(9,74,120)",  }} >
-        <Button onClick={handleClick} sx={{ backgroundColor: "rgb(9,74,120)"   }} >{options[selectedIndex]} </Button>
+    <Fragment>
+      <ButtonGroup
+        variant="contained"
+        ref={anchorRef}
+        aria-label="split button"
+        sx={{
+          display: 'flex',
+          flexGrow: 1,
+          boxShadow: '0 0 0 #fff',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingTop: 5,
+        }}
+      >
         <Button
-          size="small"
+          onClick={handleClick}
+          sx={{
+            backgroundColor: 'rgb(9,74,120)',
+            borderColor: 'rgb(9,74,120)',
+            width: 150,
+          }}
+        >
+          {dropOptions[selectedIndex]}{' '}
+        </Button>
+        <Button
           aria-controls={open ? 'split-button-menu' : undefined}
           aria-expanded={open ? 'true' : undefined}
           aria-label="select merge strategy"
           aria-haspopup="menu"
+          style={{
+            backgroundColor: 'rgb(9,74,120)',
+            borderColor: 'rgb(9,74,120)',
+          }}
           onClick={handleToggle}
         >
           <ArrowDropDownIcon />
@@ -58,24 +83,24 @@ export default function DropDown() {
         role={undefined}
         transition
         disablePortal
+        style={{ zIndex: 100 }}
       >
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === 'bottom' ? 'center top' : 'center bottom',
+              transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu">
-                  {options.map((option, index) => (
+                  {dropOptions.map((option, index) => (
                     <MenuItem
                       key={option}
                       //disabled={index === 0}
                       selected={index === selectedIndex}
-                      onClick={(event) => handleMenuItemClick(event, index)}
+                      onClick={event => handleMenuItemClick(event, index)}
                     >
                       {option}
                     </MenuItem>
@@ -86,6 +111,6 @@ export default function DropDown() {
           </Grow>
         )}
       </Popper>
-    </React.Fragment>
+    </Fragment>
   );
 }
